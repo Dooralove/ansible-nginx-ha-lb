@@ -1,3 +1,4 @@
+
 ---
 
 # 🚀 Ansible Nginx High Availability Load Balancer
@@ -47,28 +48,6 @@
 
 ---
 
-## 📁 Файловая структура
-
-```text
-ansible-nginx-ha-lb/
-├── inventory/
-│   └── hosts.txt            # LB и backend серверы
-├── playbooks/
-│   └── site.yml             # Главный playbook
-├── roles/
-│   ├── lb/                  # Роль Load Balancer
-│   │   ├── tasks/
-│   │   │   └── configure.yml
-│   │   └── templates/
-│   │       ├── lb.conf.j2
-│   │       └── upstream_backends.j2
-│   └── backend/             # Роль backend серверов
-│       └── tasks/main.yml
-└── README.md
-```
-
----
-
 ## ⚙ Роли Ansible
 
 ### `lb` — Load Balancer
@@ -88,6 +67,29 @@ ansible-nginx-ha-lb/
 * Проверяет доступность порта 80.
 
 ---
+
+## 📝 Пример инвентаря `inventory/hosts.txt`
+
+```ini
+[lb]
+lb_server ansible_host=10.0.2.10
+
+[backend]
+backend_server1 ansible_host=10.0.2.15
+backend_server2 ansible_host=10.0.2.16
+
+[lb:vars]
+lb_listen_port=80
+lb_server_name=_
+lb_upstream_name=app_upstream
+lb_upstream_group=backend
+lb_backend_port=80
+lb_access_log_path=/var/log/nginx/lb_access.log
+lb_error_log_path=/var/log/nginx/lb_error.log
+lb_proxy_connect_timeout=5s
+lb_proxy_read_timeout=30s
+lb_proxy_send_timeout=30s
+```
 
 ---
 
