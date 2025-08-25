@@ -1,0 +1,99 @@
+---
+# roles/lb/tasks/configure.yml
+- name: Disable default Debian site if present (sites-enabled/default)
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  become: yes
+
+- name: Ensure directory /etc/nginx/conf.d exists
+  file:
+    path: /etc/nginx/conf.d
+    state: directory
+    mode: '0755'
+  become: yes
+
+- name: Deploy log_format config (for upstream logging)
+  template:
+    src: log_format.j2
+    dest: /etc/nginx/conf.d/log_format.conf
+    mode: "0644"
+    owner: root
+    group: root
+  become: yes
+  register: logfmt_result
+
+- name: Find files that declare the upstream {{ lb_upstream_name }}
+  shell: "grep -R -l \"upstream {{ lb_upstream_name }}\" /etc/nginx || true"
+  register: upstream_files
+  changed_when: false
+  failed_when: false
+  become: yes
+
+- name: Debug — found upstream files
+  debug:
+    msg: "{{ upstream_files.stdout_lines }}"
+  when: upstream_files.stdout != ""
+  changed_when: false
+
+- name: Move duplicate upstream files to /root (keep the desired one)
+  command: mv "{{ item }}" "/root/{{ item | basename }}.bak"
+  loop: "{{ upstream_files.stdout_lines }}"
+  when:
+    - upstream_files.stdout_lines | length > 1
+    - item != '/etc/nginx/conf.d/upstream_backends.conf'
+  become: yes
+  failed_when: false
+  changed_when: true
+
+- name: Deploy upstream config
+  template:
+    src: upstream_backends.j2
+    dest: /etc/nginx/conf.d/upstream_backends.conf
+    mode: "0644"
+    owner: root
+    group: root
+  register: upstream_result
+  become: yes
+
+- name: Deploy LB server config
+  template:
+    src: lb.conf.j2
+    dest: /etc/nginx/conf.d/lb.conf
+    mode: "0644"
+    owner: root
+    group: root
+  register: lb_result
+  become: yes
+
+- name: Validate Nginx configuration
+  command: nginx -t
+  register: nginx_test
+  failed_when: false
+  changed_when: false
+  become: yes
+
+- name: Show nginx -t output
+  debug:
+    msg:
+      - "rc: {{ nginx_test.rc }}"
+      - "{{ nginx_test.stdout | default('') }}"
+      - "{{ nginx_test.stderr | default('') }}"
+
+- name: Reload Nginx (only if config is valid)
+  service:
+    name: nginx
+    state: reloaded
+  when: nginx_test.rc == 0
+  become: yes
+
+- name: Fail play if nginx config is invalid (and keep files for debugging)
+  fail:
+    msg: >
+      Nginx configuration test failed. See above nginx -t output.
+      Templates deployed to:
+        - /etc/nginx/conf.d/log_format.conf ({{ logfmt_result.changed | default(false) }})
+        - /etc/nginx/conf.d/upstream_backends.conf ({{ upstream_result.changed | default(false) }})
+        - /etc/nginx/conf.d/lb.conf ({{ lb_result.changed | default(false) }})
+      I did NOT reload nginx because test failed.
+  when: nginx_test.rc != 0

@@ -1,3 +1,32 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # vars file for lb
+<<<<<<< HEAD
+=======
+
+lb_listen_port: 80
+lb_server_name: _
+lb_upstream_group: "Backend_Servers"
+lb_upstream_name: "app_upstream"
+
+lb_balance_method: "round_robin"
+lb_keepalive: 16
+
+lb_backend_port: 80
+lb_max_fails: 3
+lb_fail_timeout: 10s
+
+lb_proxy_connect_timeout: 5s
+lb_proxy_read_timeout: 30s
+lb_proxy_send_timeout: 30s
+
+lb_access_log_path: /var/log/nginx/lb_access.log
+lb_error_log_path:  /var/log/nginx/lb_error.log warn
+
+lb_manage_firewall: false
+lb_manage_selinux: true
+
+lb_tls_enabled: false
+lb_tls_cert_path: /etc/nginx/tls/tls.crt
+lb_tls_key_path:  /etc/nginx/tls/tls.key
+>>>>>>> 3acc9bb (end)

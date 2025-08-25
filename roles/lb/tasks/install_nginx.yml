@@ -1,0 +1,27 @@
+---
+
+- block:  # ==============Debian=================
+    - name: Install Nginx (Debian)
+      apt:
+        name: nginx
+        state: latest
+
+    - name: Start and Enable Nginx (Debian)
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+  when: ansible_os_family == "Debian"
+
+- block:  # ==============RedHat=================
+    - name: Install Nginx (RedHat)
+      yum:
+        name: nginx
+        state: latest
+
+    - name: Start and Enable Nginx (RedHat)
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+  when: ansible_os_family == "RedHat"

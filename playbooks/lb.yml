@@ -1,0 +1,8 @@
+---
+
+- name: Create Nginx lb
+  hosts: LB_Server
+  become: yes
+
+  roles:
+    - lb

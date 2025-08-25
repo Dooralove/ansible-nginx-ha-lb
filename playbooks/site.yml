@@ -1,0 +1,13 @@
+---
+- name: Setup Load Balancer
+  hosts: LB_Server
+  become: yes
+  roles:
+    - lb
+
+- name: Setup Web Servers
+  hosts: Backend_Servers
+  become: yes
+  roles:
+    - backend
+

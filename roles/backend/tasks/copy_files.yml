@@ -1,0 +1,12 @@
+---
+
+- name: Generate INDEX.HTML File
+  template:
+    src: "index.html.j2"
+    dest: "{{ destin_folder }}/index.html"
+    owner: root
+    group: www-data
+    mode: "0644"
+  notify:
+    - Restart Nginx Web Server
+

@@ -1,3 +1,12 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # tasks file for backend
+<<<<<<< HEAD
+=======
+
+- name: Install Nginx
+  import_tasks: install_nginx.yml
+
+- name: Copy file
+  import_tasks: copy_files.yml
+>>>>>>> 3acc9bb (end)

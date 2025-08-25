@@ -1,3 +1,12 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # tasks file for lb
+<<<<<<< HEAD
+=======
+
+- name: Install Nginx Web Server
+  import_tasks: install_nginx.yml
+
+- name:   Deploy LB Config
+  import_tasks: configure.yml
+>>>>>>> 3acc9bb (end)

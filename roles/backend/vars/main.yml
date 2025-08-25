@@ -1,3 +1,7 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # vars file for backend
+<<<<<<< HEAD
+=======
+destin_folder: /var/www/html
+>>>>>>> 3acc9bb (end)

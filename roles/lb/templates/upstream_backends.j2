@@ -1,0 +1,8 @@
+# Managed by Ansible role: lb
+# DO NOT EDIT MANUALLY — will be overwritten by Ansible.
+# Upstream backend pool (dynamic from inventory)
+upstream {{ lb_upstream_name }} {
+    {% for host in groups[lb_upstream_group] | default([]) %}
+    server {{ hostvars[host].ansible_host | default(host) }}:{{ hostvars[host].backend_port | default(lb_backend_port) }};
+    {% endfor %}
+}

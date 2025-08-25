@@ -1,3 +1,11 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # handlers file for lb
+<<<<<<< HEAD
+=======
+
+- name: Restart Nginx Web Server
+  service:
+    name: nginx
+    state: restarted
+>>>>>>> 3acc9bb (end)
